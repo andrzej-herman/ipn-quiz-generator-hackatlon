@@ -1,6 +1,7 @@
 ﻿using FaceRecognitionDotNet;
 using Microsoft.EntityFrameworkCore;
 using Mosaik.Core;
+using Newtonsoft.Json;
 using Scraper.PeoplePhotos.Dtos;
 using Scraper.PeoplePhotos.Entities;
 using System;
@@ -35,6 +36,8 @@ namespace Scraper.PeoplePhotos.Services
                 .OrderByDescending(x => x.Images.Count)
                 .ToList();
 
+            List<QuestionDto> questions = new();
+
             foreach (Person person in people)
             {
                 ImagePerson? imagePerson = person.Images.FirstOrDefault(x => x.Image.FacesCount == 1 && x.Image.People.Count == 1);
@@ -46,8 +49,9 @@ namespace Scraper.PeoplePhotos.Services
 
                 Sex sex = person.Sex;
                 List<string> fakeAnswers = _context.People
-                    .Where(x => x.Sex == sex && x.Name == person.Name)
+                    .Where(x => x.Sex == sex && x.Name != person.Name)
                     .Select(x => x.Name)
+                    .Take(3)
                     .ToList();
 
                 List<string> answers = fakeAnswers.ToList();
@@ -62,9 +66,11 @@ namespace Scraper.PeoplePhotos.Services
                     CorrectAnswer = person.Name,
                     SuggestedDifficulty = 1
                 };
-
-
+                questions.Add(question);
             }
+
+            var questionsStringContent = new StringContent(JsonConvert.SerializeObject(questions), Encoding.UTF8, "application/json");
+            _ = new HttpClient().PostAsync("https://localhost:7068/api/questions/save", questionsStringContent).Result;
         }
     }
 }

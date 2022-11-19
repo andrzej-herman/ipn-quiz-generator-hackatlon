@@ -16,6 +16,8 @@ public partial class IpnQuizContext : DbContext
     {
     }
 
+    public virtual DbSet<Question> Questions { get; set; }
+
     public virtual DbSet<QuizUser> QuizUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -24,6 +26,13 @@ public partial class IpnQuizContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Question>(entity =>
+        {
+            entity.HasKey(e => e.QuestionId).HasName("PK__Question__0DC06FAC144D9702");
+
+            entity.Property(e => e.SuggestedDifficulty).HasDefaultValueSql("((1))");
+        });
+
         OnModelCreatingPartial(modelBuilder);
     }
 

@@ -9,6 +9,7 @@ using IHost host = Host.CreateDefaultBuilder(args)
     {
         services.AddDbContext<ImagesContext>(x => x.UseSqlServer("Server=MSI-MATI\\SQLEXPRESS;Database=Images;User Id=visualStudio;Password=qwerty12345;"));
         services.AddScoped<IImagesScraper, ImagesScraper>();
+        services.AddScoped<IQuestionsGenerator, QuestionsGenerator>();
     })
     .Build();
 
