@@ -1,0 +1,94 @@
+﻿
+<div class="container">
+    <div class="generator-options-container pt-2 pb-5">
+        <p style="font-size: 20px">
+            Proszę uzupełnić pola dotyczące ustawień generowanego quizu.
+            Należy podać tematykę quizu, poziom trudności oraz ilość pytań.
+            Następnie proszę nacisnąc przycisk 'GENERUJ PYTANIA'
+        </p>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="generator-options hp-10">
+                    <RadzenText class="fr tb">Tematyka quizu</RadzenText>
+                    <RadzenTextBox @bind-Value="@SearchText" Class="w-100" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-9 col-md-9 col-sm-12">
+                <div class="generator-options hp-10">
+                    <RadzenText class="fr tb">Poziom trudności</RadzenText>
+                    <div style="display: flex; align-items: center">
+                        <RadzenDropDown AllowClear="true" TValue="int" Class="w-100"
+                                        Data=@Levels @bind-Value="@Difficulty"
+                                        TextProperty="Text" ValueProperty="Value" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+                <div class="generator-options hp-10">
+                    <RadzenText class="fr tb">Ilość pytań</RadzenText>
+                    <RadzenTextBox @bind-Value="@NumQuestions" Class="w-100" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Large" class="w-100" Click="Generuj">Generuj pytania</RadzenButton>
+            </div>
+        </div>
+        @if (GeneratorError != null)
+        {
+            <div class="quiz-generator-alert mt-3">@GeneratorError</div>
+        }
+
+    </div>
+</div>
+
+@code {
+
+    private IEnumerable<DifficultyLevel> Levels { get; set; } = new List<DifficultyLevel>
+    {
+        new DifficultyLevel { Text = "szkoła podstawowa", Value = 1 },
+        new DifficultyLevel { Text = "szkoła ponadpodstawowa", Value = 2 },
+        new DifficultyLevel { Text = "poziom rozszerzony", Value = 3 },
+    };
+
+    private string? SearchText { get; set; }
+    private int Difficulty { get; set; }
+    private string? NumQuestions { get; set; }
+    private string? GeneratorError { get; set; } = "Prosze podać dsadasdasd ";
+
+
+    private QuizOptions? Options { get; set; }
+
+
+    private void Generuj()
+    {
+        if (string.IsNullOrEmpty(SearchText) || string.IsNullOrWhiteSpace(SearchText))
+        {
+            GeneratorError = "Proszę podać tamatykę quizu";
+            return;
+        }
+
+        if (Difficulty == 0)
+        {
+            GeneratorError = "Proszę wybrać poziom trudności";
+            return;
+        }
+
+        if (!int.TryParse(NumQuestions, out int val))
+        {
+            GeneratorError = "Nieprawidłowa liczba pytań";
+            return;
+        }
+
+        if (val > 100)
+        {
+            GeneratorError = "Maksymalna liczba pytań to 100";
+            return;
+        }
+    }
+}
