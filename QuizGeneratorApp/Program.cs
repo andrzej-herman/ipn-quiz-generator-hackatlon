@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using QuizGeneratorApp.Database.BaseContext;
 using QuizGeneratorApp.Database.DbTools;
 using QuizGeneratorApp.Database.Repository;
+using QuizGeneratorApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<IpnQuizContext>(options =>
 });
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
@@ -29,6 +31,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.UseRouting();
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.Run();
