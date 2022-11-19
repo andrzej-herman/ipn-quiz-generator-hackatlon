@@ -9,12 +9,12 @@ namespace Scrapper.Dates.Managers
         public string QuestionBody { get; set; }
         public string CorrectAnswer { get; set; }
         public string SearchText { get; set; }
-        public int DifficultyLevel { get; set; }
+        public int SuggestedDifficulty { get; set; }
         public YearBasedQuestion(HistoricalFact fact, List<HistoricalFact> fakes, int difficultyLevel)
         {
-            DifficultyLevel = difficultyLevel;
-            _difficulty = DifficultyLevel * 10;
-            QuestionTitle = $"Co wydarzyło się {fact.DateOfFact.ToShortDateString()} ?";
+            SuggestedDifficulty = difficultyLevel;
+            _difficulty = SuggestedDifficulty * 10;
+            QuestionTitle = $"Co wydarzyło się {fact.DateOfFact.ToString("yyyy-MM-dd")}?";
             CorrectAnswer = fact.DescriptionOfFact;
             SearchText = fact.DescriptionOfFact;
             fakes = fakes.Where(w =>  w != fact && w.Year >= fact.Year - _difficulty && w.Year <= fact.Year + _difficulty)
@@ -28,23 +28,24 @@ namespace Scrapper.Dates.Managers
         }
         private string GenerateQuestionBodyHtml(List<string> ansewrs)
         {
-            return $@"<p>{QuestionTitle}<br>&nbsp;</p>
-                            <p style=""margin-left:40px;"">{QuestionBody}<br>&nbsp;</p>
-                            <figure class=""table"" style=""width:500px;"">
-                                <table>
-                                    <tbody>
-                                        <tr>
-                                            <td>{ansewrs[0]}</td>
-                                            <td>{ansewrs[1]}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{ansewrs[2]}</td>
-                                            <td>{ansewrs[3]}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </figure>
-                            <p>&nbsp;</p>";
+            string html = $@"<p>{QuestionTitle}<br>&nbsp;</p>";
+            //html += $"<p style=\"margin-left:40px;\">{QuestionBody}<br>&nbsp;</p>";
+            html += "<figure class=\"table\" style=\"width:500px;\">";
+            html += "<table>";
+            html += "<tbody>";
+            html += "<tr>";
+            html += $"<td>A. {ansewrs[0]}</td>";
+            html += $"<td>B. {ansewrs[1]}</td>";
+            html += "</tr>";
+            html += "<tr>";
+            html += $"<td>C. {ansewrs[2]}</td>";
+            html += $"<td>D. {ansewrs[3]}</td>";
+            html += "</tr>";
+            html += "</tbody>";
+            html += "</table>";
+            html += "</figure>";
+            html += "<p>&nbsp;</p>";
+            return html;
         }
     }
 }
