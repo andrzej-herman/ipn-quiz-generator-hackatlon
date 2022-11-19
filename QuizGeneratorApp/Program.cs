@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using QuizGeneratorApp.Auth;
 using QuizGeneratorApp.Database.BaseContext;
 using QuizGeneratorApp.Database.DbTools;
 using QuizGeneratorApp.Database.Repository;
@@ -20,8 +22,10 @@ builder.Services.AddDbContext<IpnQuizContext>(options =>
 });
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IQuizGeneratorService, QuizGeneratorService>();
+builder.Services.AddScoped<AuthenticationStateProvider, QuizGeneratorAuthStateProvider>();
 var app = builder.Build();
 
 Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -35,8 +39,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.UseRouting();
 app.MapControllers();
+app.UseRouting();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.Run();

@@ -1,0 +1,88 @@
+﻿@inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider StateProvider 
+ 
+ <nav class="navbar navbar-expand-lg navbar-light fixed-top no-background">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="assets/img/logo_gq.png" alt="" class="logo-dark">
+            <img src="assets/img/logo_gq_white.png" alt="" class="logo-white">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Strona główna</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/instruction">Instrukcja</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav navbar-right">
+                <AuthorizeView Context="auth">
+                    <Authorized>
+                        <li class="nav-item pr-2 text-white">@auth.User.Identity?.Name</li>
+                        <RadzenButton Size="ButtonSize.Small" Variant="Variant.Outlined" Click="Logout" Text="Wyloguj się" ButtonStyle="ButtonStyle.Light" />
+                    </Authorized>
+                    <NotAuthorized>
+                        @switch (Page)
+                        {
+                            case "Index":
+                                <li class="nav-item"><a href="/login" class="nav-link">Logowanie</a></li>
+                                <li class="nav-item"><a href="/register" class="nav-link">Rejestracja</a></li>
+                                break;
+                            case "Login":
+                                <li class="nav-item"><a href="/register" class="nav-link">Rejestracja</a></li>
+                                break;
+                            default:
+                                <li class="nav-item"><a href="/login" class="nav-link">Logowanie</a></li>
+                                break;
+                        }
+                    </NotAuthorized>
+                </AuthorizeView>
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+ <header class="minimal-header">
+     <div class="container">
+         <div class="row">
+             <div class="col-md-8 offset-md-2">
+                 <div class="minimal-header-text">
+                     @switch (Page)
+                     {
+                         case "Index":
+                             <h1>Instytut Pamięci Narodowej</h1>
+                             <nav aria-label="breadcrumb">
+                                 <ol class="breadcrumb">
+                                     <li>Generator quizów edukacyjnych dotyczących najnowszej historii Polski</li>
+                                 </ol>
+                             </nav>
+                             break;
+                         case "Login":
+                             <h2 class="text-white">Logowanie do serwisu</h2>
+                             break;
+                         default:
+                             <h2 class="text-white">Rejestracja nowego użytkownika</h2>
+                             break;
+                     }
+                 </div>
+             </div>
+         </div>
+     </div>
+ </header>
+ 
+ @code {
+
+     [Parameter]
+     public string? Page { get; set; }
+     
+     private async Task Logout()
+     {
+         var stateProvider = (QuizGeneratorAuthStateProvider) StateProvider;
+         await stateProvider.UpdateAuthenticationState(null);
+         NavigationManager.NavigateTo("/");
+     }
+ }
