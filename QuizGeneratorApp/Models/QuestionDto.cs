@@ -7,4 +7,5 @@ public class QuestionDto
     public string QuestionBody { get; set; } = null!;
     public string CorrectAnswer { get; set; } = null!;
     public string SearchText { get; set; } = null!;
+    public int SuggestedDifficulty { get; set; }
 }
