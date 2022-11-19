@@ -29,6 +29,8 @@ public partial class IpnQuizContext : DbContext
         modelBuilder.Entity<Question>(entity =>
         {
             entity.HasKey(e => e.QuestionId).HasName("PK__Question__0DC06FAC144D9702");
+
+            entity.Property(e => e.SuggestedDifficulty).HasDefaultValueSql("((1))");
         });
 
         OnModelCreatingPartial(modelBuilder);

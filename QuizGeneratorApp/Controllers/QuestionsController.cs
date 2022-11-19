@@ -17,9 +17,10 @@ public class QuestionsController
 	}
 
     [HttpGet]
-    public QuestionDto[] GetPage([FromQuery] string searchText, [FromQuery] int count, [FromQuery] int offset)
+    public QuestionDto[] GetPage([FromQuery] string searchText, [FromQuery] int suggestedDifficulty, 
+        [FromQuery] int count, [FromQuery] int offset)
     {
-        return _questionService.GetPage(searchText, count, offset);
+        return _questionService.GetPage(searchText, suggestedDifficulty, count, offset);
     }
 
     [HttpPost("save")]
