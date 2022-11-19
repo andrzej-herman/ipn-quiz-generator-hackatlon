@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using QuizGeneratorApp.Database.BaseContext;
 using QuizGeneratorApp.Database.Models;
 using QuizGeneratorApp.Models;
@@ -12,7 +13,26 @@ public class QuestionService : IQuestionService
     {
         _dbContext = dbContext;
     }
-    public void SaveQuestions(QuestionDto[] questionsDto)
+
+    public QuestionDto[] GetPage(string searchText, int count, int offset)
+    {
+        return _dbContext.Questions.FromSql(
+            @$"SELECT QuestionId, QuestionTitle, QuestionBody, CorrectAnswer, SearchText 
+               FROM dbo.Questions 
+               JOIN FREETEXTTABLE(dbo.Questions, SearchText, {searchText}) FT ON dbo.Questions.QuestionId = FT.[Key] 
+               ORDER BY FT.RANK DESC
+               OFFSET {(offset - 1) * count} ROWS FETCH NEXT {count} ROWS ONLY")
+               .Select(q => new QuestionDto
+               {
+                   QuestionId = q.QuestionId,
+                   QuestionTitle = q.QuestionTitle,
+                   QuestionBody = q.QuestionBody,
+                   CorrectAnswer = q.CorrectAnswer,
+                   SearchText = q.SearchText
+               }).ToArray();
+    }
+
+    public void Save(QuestionDto[] questionsDto)
     {
         _dbContext.AddRange(questionsDto.Select(MapDtoToDbModel));
         _dbContext.SaveChanges();
