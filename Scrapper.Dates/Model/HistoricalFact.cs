@@ -16,6 +16,7 @@ namespace Scrapper.Dates.Model
         public int Year { get; set; }
         public DateTime DateOfFact => new DateTime(Year, Month, Day);
         public string DescriptionOfFact { get; set; }
+        
         private void ResolvePath(string path)
         {
             var asd = path.Split('.');

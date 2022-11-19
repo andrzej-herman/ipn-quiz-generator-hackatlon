@@ -22,8 +22,6 @@ namespace Scrapper.Dates.Core
                         var result = await client.GetAsync($@"{_url}{i}");
                         string responseBody = await result.Content.ReadAsStringAsync();
                         var a = JsonConvert.DeserializeObject<JObject>(responseBody);
-                        var zx = a.GetType();
-
 
                         foreach (var item in a.AsJEnumerable())
                         {
@@ -35,17 +33,13 @@ namespace Scrapper.Dates.Core
                                     {
                                         foreach (var item5 in item4.AsJEnumerable())
                                         {
-                                            //var obj = item5.Children()["topic"].Values<string>().First().ToString();
                                             resultList.Add(new HistoricalFact(item5, i));
                                         }
                                     }
-
                                 }
                             }
                         }
                     }
-                    
-                
                 }
 
             }
