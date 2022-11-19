@@ -3,6 +3,7 @@ using QuizGeneratorApp.Database.BaseContext;
 using QuizGeneratorApp.Database.DbTools;
 using QuizGeneratorApp.Database.Repository;
 using QuizGeneratorApp.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
@@ -20,7 +21,11 @@ builder.Services.AddDbContext<IpnQuizContext>(options =>
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
+builder.Services.AddScoped<IQuizGeneratorService, QuizGeneratorService>();
 var app = builder.Build();
+
+Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
