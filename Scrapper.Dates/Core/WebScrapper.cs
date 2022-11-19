@@ -17,45 +17,39 @@ namespace Scrapper.Dates.Core
         private static HttpClient _client = new HttpClient();
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            try
-            {
-                List<HistoricalFact> resultList = new List<HistoricalFact>();
-                for (int i = yearFrom; i <= yearTo; i++)
-                {
-                    var result = await _client.GetAsync($@"{_url}{i}");
-                    string responseBody = await result.Content.ReadAsStringAsync();
-                    var a = JsonConvert.DeserializeObject<JObject>(responseBody);
 
-                    foreach (var item in a.AsJEnumerable())
+            List<HistoricalFact> resultList = new List<HistoricalFact>();
+            for (int i = yearFrom; i <= yearTo; i++)
+            {
+                var result = await _client.GetAsync($@"{_url}{i}");
+                string responseBody = await result.Content.ReadAsStringAsync();
+                var a = JsonConvert.DeserializeObject<JObject>(responseBody);
+
+                foreach (var item in a.AsJEnumerable())
+                {
+                    foreach (var item2 in item.AsJEnumerable())
                     {
-                        foreach (var item2 in item.AsJEnumerable())
+                        foreach (var item3 in item2.AsJEnumerable())
                         {
-                            foreach (var item3 in item2.AsJEnumerable())
+                            foreach (var item4 in item3.AsJEnumerable())
                             {
-                                foreach (var item4 in item3.AsJEnumerable())
+                                foreach (var item5 in item4.AsJEnumerable())
                                 {
-                                    foreach (var item5 in item4.AsJEnumerable())
-                                    {
-                                        resultList.Add(new HistoricalFact(item5, i));
-                                    }
+                                    resultList.Add(new HistoricalFact(item5, i));
                                 }
                             }
                         }
                     }
                 }
-
-                QuestionsManager manager = new QuestionsManager(resultList);
-                var dQuestions = new StringContent(JsonConvert.SerializeObject(manager.GetDescriptionBasedQuestions()), Encoding.UTF8, "application/json");
-                var yQuestions = new StringContent(JsonConvert.SerializeObject(manager.GetYearBasedQuestions()), Encoding.UTF8, "application/json");
-                await _client.PostAsync(_exportUrl, dQuestions);
-                await _client.PostAsync(_exportUrl, yQuestions);
-
             }
-            catch (Exception ex)
-            {
 
-                throw;
-            }
+            QuestionsManager manager = new QuestionsManager(resultList);
+            var dQuestions = new StringContent(JsonConvert.SerializeObject(manager.GetDescriptionBasedQuestions()), Encoding.UTF8, "application/json");
+            var yQuestions = new StringContent(JsonConvert.SerializeObject(manager.GetYearBasedQuestions()), Encoding.UTF8, "application/json");
+            await _client.PostAsync(_exportUrl, dQuestions);
+            await _client.PostAsync(_exportUrl, yQuestions);
+
         }
+
     }
 }
