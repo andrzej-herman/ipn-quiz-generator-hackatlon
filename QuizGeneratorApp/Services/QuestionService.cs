@@ -14,7 +14,7 @@ public class QuestionService : IQuestionService
         _dbContext = dbContext;
     }
 
-    public async Task<QuestionDto[]> GetPage(string searchText, int suggestedDifficulty, int count, int offset)
+    public async Task<QuestionDto[]> GetPageAsync(string searchText, int suggestedDifficulty, int count, int offset)
     {
         return await _dbContext.Questions.FromSql(
             @$"SELECT QuestionId, QuestionTitle, QuestionBody, CorrectAnswer, SearchText, SuggestedDifficulty

@@ -19,10 +19,10 @@ public class QuestionsController
     }
 
     [HttpGet]
-    public QuestionDto[] GetPage([FromQuery] string searchText, [FromQuery] int suggestedDifficulty, 
+    public async Task<QuestionDto[]> GetPageAsync([FromQuery] string searchText, [FromQuery] int suggestedDifficulty, 
         [FromQuery] int count, [FromQuery] int offset)
     {
-        return _questionService.GetPage(searchText, suggestedDifficulty, count, offset);
+        return await _questionService.GetPageAsync(searchText, suggestedDifficulty, count, offset);
     }
 
     [HttpPost("save")]

@@ -105,7 +105,7 @@
         }
 
         var idx = 1;
-        var questions = await QuestionService.GetPage(SearchText, Difficulty, val, 1);
+        var questions = await QuestionService.GetPageAsync(SearchText, Difficulty, val, 1);
         foreach (var q in questions)
         {
             q.DisplayNumber = idx;
