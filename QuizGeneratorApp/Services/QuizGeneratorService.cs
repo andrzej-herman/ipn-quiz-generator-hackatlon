@@ -20,6 +20,7 @@ public class QuizGeneratorService : IQuizGeneratorService
         }
         
         HtmlToPdf converter = new HtmlToPdf();
+        converter.Options.KeepImagesTogether = true;
         converter.Options.MarginBottom = 40;
         converter.Options.MarginTop = 40;
         converter.Options.MarginLeft = 40;
