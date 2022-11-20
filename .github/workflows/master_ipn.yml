@@ -25,33 +25,5 @@ jobs:
       - name: Build with dotnet
         run: dotnet build ./QuizGeneratorApp/QuizGeneratorApp.csproj --configuration Release
 
-      - name: dotnet publish
-        run: dotnet publish -c Release ./QuizGeneratorApp/QuizGeneratorApp.csproj -o ${{env.DOTNET_ROOT}}/myapp
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: .net-app
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'ipn'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1F2D62B88D9D4722832782555CB75187 }}
-          package: .
+      - name: Publish ipn.hostingasp.pl
+        run: dotnet publish -c Release ./QuizGeneratorApp/QuizGeneratorApp.csproj /p:PublishProfile="./QuizGeneratorApp/Properties/PublishProfiles/IISProfile.pubxml" /p:Password="${{ secrets.PUBLISH }}"
