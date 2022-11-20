@@ -91,7 +91,7 @@ namespace Scraper.PeoplePhotos.Services
             }
 
             var questionsStringContent = new StringContent(JsonConvert.SerializeObject(questions), Encoding.UTF8, "application/json");
-            _ = new HttpClient().PostAsync("https://localhost:7068/api/questions/save", questionsStringContent).Result;
+            _ = new HttpClient().PostAsync("https://ipn.hostingasp.pl/api/questions/save", questionsStringContent).Result;
         }
     }
 }
