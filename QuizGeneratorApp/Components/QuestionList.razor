@@ -1,11 +1,15 @@
 ﻿@inject IQuizGeneratorService QuizGeneratorService
 @inject IJSRuntime IJS
+@inject NavigationManager NavigationManager
 
 @if (Questions != null)
 {
     <div class="row mt-4">
-        <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="col-lg-8 col-md-8 col-sm-12">
             <RadzenButton ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Large" class="w-100" Click="GenerujPDF">Generuj Quiz jako plik PDF</RadzenButton>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12">
+            <RadzenButton ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Large" class="w-100" Click="ResetForm">Resetuj wyniki</RadzenButton>
         </div>
     </div>
     foreach (var q in Questions)
@@ -15,6 +19,7 @@
                     Numer pytania: @q.DisplayNumber
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-12">
+                    <h4>@((MarkupString)q.QuestionTitle)</h4>
                     <div>@((MarkupString)q.QuestionBody)</div>
                     <div class="mt-2">Prawidłowa odpowiedź: <b>@((MarkupString)q.CorrectAnswer)</b></div>
                 </div>
@@ -28,9 +33,17 @@
     [Parameter]
     public IEnumerable<QuestionDto>? Questions { get; set; }
 
+    [Parameter]
+    public EventCallback OnReset { get; set; }
+
     async Task GenerujPDF()
     {
         var bytes = await QuizGeneratorService.GenerateAsync(Questions!.ToArray());
         await IJS.InvokeVoidAsync("saveByteArray", "Quiz.pdf", bytes);
+    }
+
+    async Task ResetForm()
+    {
+        await OnReset.InvokeAsync();
     }
 }
