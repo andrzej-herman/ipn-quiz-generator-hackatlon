@@ -30,7 +30,7 @@ namespace Scrapper.Dates.Managers
         private string GenerateQuestionBodyHtml(List<string> ansewrs)
         {
             string html = $@"<p>{QuestionTitle}<br>&nbsp;</p>";
-            html += $@"<p style=""margin-left:40px;"">{SearchText}<br>&nbsp;</p>";
+            html += $@"<p>{SearchText}<br>&nbsp;</p>";
             html += "<div style=\"width:100%!important\">";
             html += "<table class=\"table table-bordered w-100\">";
             html += "<tbody>";
