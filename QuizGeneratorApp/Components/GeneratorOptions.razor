@@ -93,24 +93,28 @@
         if (string.IsNullOrEmpty(SearchText) || string.IsNullOrWhiteSpace(SearchText))
         {
             GeneratorError = "Proszę podać tematykę quizu";
+            IsLoading = false;
             return;
         }
 
         if (Difficulty == 0)
         {
             GeneratorError = "Proszę wybrać poziom trudności";
+            IsLoading = false;
             return;
         }
 
         if (!int.TryParse(NumQuestions, out int val))
         {
             GeneratorError = "Nieprawidłowa liczba pytań";
+            IsLoading = false;
             return;
         }
 
         if (val > 100)
         {
             GeneratorError = "Maksymalna liczba pytań to 100";
+            IsLoading = false;
             return;
         }
 
