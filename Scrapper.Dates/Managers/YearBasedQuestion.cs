@@ -1,4 +1,5 @@
 ﻿using Scrapper.Dates.Model;
+using System.Globalization;
 
 namespace Scrapper.Dates.Managers
 {
@@ -14,7 +15,7 @@ namespace Scrapper.Dates.Managers
         {
             SuggestedDifficulty = difficultyLevel;
             _difficulty = SuggestedDifficulty * 10;
-            QuestionTitle = $"Co wydarzyło się {fact.DateOfFact.ToString("yyyy-MM-dd")}?";
+            QuestionTitle = $"Co wydarzyło się {fact.DateOfFact.ToString("dd MMMMM yyyy", CultureInfo.GetCultureInfo("pl-PL"))}?";
             CorrectAnswer = fact.DescriptionOfFact;
             SearchText = fact.DescriptionOfFact;
             fakes = fakes.Where(w =>  w != fact && w.Year >= fact.Year - _difficulty && w.Year <= fact.Year + _difficulty)
@@ -29,9 +30,8 @@ namespace Scrapper.Dates.Managers
         private string GenerateQuestionBodyHtml(List<string> ansewrs)
         {
             string html = $@"<p>{QuestionTitle}<br>&nbsp;</p>";
-            //html += $"<p style=\"margin-left:40px;\">{QuestionBody}<br>&nbsp;</p>";
-            html += "<figure class=\"table\" style=\"width:500px;\">";
-            html += "<table>";
+            html += "<div style=\"width:100%!important\">";
+            html += "<table class=\"table table-bordered w-100\">";
             html += "<tbody>";
             html += "<tr>";
             html += $"<td>A. {ansewrs[0]}</td>";
@@ -43,8 +43,7 @@ namespace Scrapper.Dates.Managers
             html += "</tr>";
             html += "</tbody>";
             html += "</table>";
-            html += "</figure>";
-            html += "<p>&nbsp;</p>";
+            html += "</div>";
             return html;
         }
     }
