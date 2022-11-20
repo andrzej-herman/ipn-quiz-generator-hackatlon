@@ -26,10 +26,7 @@ public class QuizGeneratorService : IQuizGeneratorService
         converter.Options.MarginRight = 40;
 
         var doc = converter.ConvertHtmlString(sb.ToString());
-        var ms = new MemoryStream();
-        doc.Save(ms);
-        ms.Position = 0;
 
-        return await Task.FromResult(ms.ToArray());
+        return await Task.FromResult(doc.Save());
     }
 }
