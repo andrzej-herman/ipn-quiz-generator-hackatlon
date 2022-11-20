@@ -63,7 +63,7 @@ namespace Scraper.PeoplePhotos.Services
                         .Select(x => x.Name)
                         .Take(4 - answers.Count));
                 }
-                answers.OrderBy(x => Guid.NewGuid());
+                answers = answers.OrderBy(x => Guid.NewGuid()).ToList();
 
                 int suggestedDifficulty;
                 switch (person.Images.Count)
