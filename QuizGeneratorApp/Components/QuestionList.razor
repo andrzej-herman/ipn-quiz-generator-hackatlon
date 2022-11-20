@@ -1,4 +1,7 @@
-﻿@if (Questions != null)
+﻿@inject IQuizGeneratorService QuizGeneratorService
+@inject IJSRuntime IJS
+
+@if (Questions != null)
 {
     <div class="row mt-4">
         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -26,8 +29,9 @@
     [Parameter]
     public IEnumerable<QuestionDto>? Questions { get; set; }
 
-    void GenerujPDF()
+    async Task GenerujPDF()
     {
-        
+        var bytes = await QuizGeneratorService.GenerateAsync(Questions!.ToArray());
+        await IJS.InvokeVoidAsync("saveByteArray", "Quiz.pdf", bytes);
     }
 }

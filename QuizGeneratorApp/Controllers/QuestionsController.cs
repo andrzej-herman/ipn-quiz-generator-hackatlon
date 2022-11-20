@@ -32,8 +32,8 @@ public class QuestionsController
 	}
 
     [HttpPost("generate")]
-    public byte[] GeneratePdf([FromBody] QuestionDto[] questionDtos)
+    public async Task<byte[]> GeneratePdf([FromBody] QuestionDto[] questionDtos)
     {
-        return _quizGeneratorService.Generate(questionDtos);
+        return await _quizGeneratorService.GenerateAsync(questionDtos);
     }
 }

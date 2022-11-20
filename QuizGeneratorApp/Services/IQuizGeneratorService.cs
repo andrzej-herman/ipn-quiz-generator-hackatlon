@@ -4,5 +4,5 @@ namespace QuizGeneratorApp.Services;
 
 public interface IQuizGeneratorService
 {
-    public byte[] Generate(QuestionDto[] questionDtos);
+    public Task<byte[]> GenerateAsync(QuestionDto[] questionDtos);
 }

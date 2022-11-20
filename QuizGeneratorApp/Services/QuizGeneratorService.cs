@@ -9,7 +9,7 @@ namespace QuizGeneratorApp.Services;
 
 public class QuizGeneratorService : IQuizGeneratorService
 {
-    public byte[] Generate(QuestionDto[] questionDtos)
+    public async Task<byte[]> GenerateAsync(QuestionDto[] questionDtos)
     {
         var sb = new StringBuilder();
         for (int i = 0; i < questionDtos.Length; i++)
@@ -23,6 +23,6 @@ public class QuizGeneratorService : IQuizGeneratorService
         using var ms = new MemoryStream();
         pdf.Save(ms);
         
-        return ms.ToArray();
+        return await Task.FromResult(ms.ToArray());
     }
 }
