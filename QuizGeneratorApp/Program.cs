@@ -25,10 +25,12 @@ var app = builder.Build();
 
 Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
+app.UseDeveloperExceptionPage();
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    //app.UseExceptionHandler("/Error");
+    //app.UseHsts();
 }
 
 app.UseHttpsRedirection();
