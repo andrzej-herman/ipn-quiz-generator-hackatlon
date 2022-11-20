@@ -1,0 +1,12 @@
+﻿@page "/generator"
+<AuthorizeView Context="auth">
+    <Authorized>
+        <GeneratorHeader Page="Index"/>
+        <GeneratorOptions/>
+        <GeneratorFooter/>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin/>
+    </NotAuthorized>
+</AuthorizeView>
+

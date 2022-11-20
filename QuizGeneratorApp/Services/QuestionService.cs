@@ -14,9 +14,9 @@ public class QuestionService : IQuestionService
         _dbContext = dbContext;
     }
 
-    public QuestionDto[] GetPage(string searchText, int suggestedDifficulty, int count, int offset)
+    public async Task<QuestionDto[]> GetPageAsync(string searchText, int suggestedDifficulty, int count, int offset)
     {
-        return _dbContext.Questions.FromSql(
+        return await _dbContext.Questions.FromSql(
             @$"SELECT QuestionId, QuestionTitle, QuestionBody, CorrectAnswer, SearchText, SuggestedDifficulty
                FROM dbo.Questions 
                JOIN FREETEXTTABLE(dbo.Questions, SearchText, {searchText}) FT ON dbo.Questions.QuestionId = FT.[Key] 
@@ -31,7 +31,7 @@ public class QuestionService : IQuestionService
                    CorrectAnswer = q.CorrectAnswer,
                    SearchText = q.SearchText,
                    SuggestedDifficulty = q.SuggestedDifficulty
-               }).ToArray();
+               }).ToArrayAsync();
     }
 
     public void Save(QuestionDto[] questionsDto)
