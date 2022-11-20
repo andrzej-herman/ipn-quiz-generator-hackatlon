@@ -55,7 +55,7 @@
         {
             if (Questions.Any())
             {
-                <QuestionList Questions="@Questions" />
+                <QuestionList Questions="@Questions" OnReset="Reset"/>
             }
             else
             {
@@ -86,6 +86,11 @@
 
     private QuizOptions? Options { get; set; }
 
+    void Reset()
+    {
+        Questions = null;
+        StateHasChanged();
+    }
 
     private async Task Generuj()
     {
