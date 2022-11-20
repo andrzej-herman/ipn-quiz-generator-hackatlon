@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace QuizGeneratorApp.Database.Models;
 
 [Table("QuizUser")]
-[Index("QuizUserEmail", Name = "IX_QuizEmail", IsUnique = true)]
 public partial class QuizUser
 {
     [Key]
