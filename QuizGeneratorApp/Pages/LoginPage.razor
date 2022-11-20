@@ -1,0 +1,66 @@
+﻿@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager;
+@inject AuthenticationStateProvider StateProvider
+
+<GenaratorLoader Visible="@IsLoading"/>
+<GeneratorHeader Page="Login"/>
+ <div class="register-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="login-form">
+                    <h6>Zaloguj się podając swój adres email oraz hasło</h6>
+                    <RadzenTemplateForm TItem="LoginRequest" Data="@_loginRequest" Submit="Login">
+                        <div class="form-group input-icon pt-3">
+                            <span class="ti-user form-control-feedback"></span>
+                            <RadzenTextBox Name="Email" class="w-100 pl-5" @bind-Value="_loginRequest.Email" Placeholder="twój adres email"/>
+                            <RadzenRequiredValidator Component="Email" Text="Proszę podać adres email" Popup="false" />
+                            <RadzenEmailValidator Component="Email" Text="Nieprawidłowy adres email" Popup="false" />
+                        </div>
+                        <div class="form-group input-icon">
+                            <span class="ti-unlock form-control-feedback"></span>
+                            <RadzenPassword Name="Password" class="w-100 pl-5" @bind-Value="_loginRequest.Password" Placeholder="twoje hasło" />
+                            <RadzenRequiredValidator Component="Password" Text="Proszę podać hasło" Popup="false" />
+                        </div>
+                        <div class="form-group input-icon pt-3">
+                            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="ButtonStyle.Info" class="w-100">Zaloguj</RadzenButton>
+                            <div class="pt-2">Nie masz jeszcze konta w serwisie? <a href="/register">Utwórz konto</a></div>
+                        </div>
+                        @if (AuthError != null)
+                        {
+                            <div class="quiz-generator-alert">@AuthError</div>
+                        }
+                    </RadzenTemplateForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<GeneratorFooter />
+
+@code {
+
+    private readonly LoginRequest _loginRequest = new LoginRequest();
+    private string? AuthError { get; set; }
+    private bool IsLoading { get; set; }
+
+    async Task Login()
+    {
+        IsLoading = true;
+        AuthError = null;
+        var result = await AuthService.Login(_loginRequest);
+        if (!result.Result)
+        {
+            AuthError = result.Error;
+            IsLoading = false;
+            return;
+        }
+        
+        var stateProvider = (QuizGeneratorAuthStateProvider) StateProvider;
+        await stateProvider.UpdateAuthenticationState(result.UserSession);
+        AuthError = null;
+        IsLoading = false;
+        NavigationManager.NavigateTo($"/generator");
+    }
+}

@@ -1,0 +1,13 @@
+﻿@{
+    var className = Visible ? "gen-loader" : "gen-loader-hidden"; 
+}
+
+<div class="@className">
+    <span class="gen-loader-target"></span>
+</div>
+
+@code {
+
+    [Parameter]
+    public bool Visible { get; set; }
+}
