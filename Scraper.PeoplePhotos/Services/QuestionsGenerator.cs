@@ -40,37 +40,58 @@ namespace Scraper.PeoplePhotos.Services
 
             foreach (Person person in people)
             {
-                ImagePerson? imagePerson = person.Images.FirstOrDefault(x => x.Image.FacesCount == 1 && x.Image.People.Count == 1);
+                ImagePerson? imagePerson = person.Images.FirstOrDefault(x => x.Image.FacesCount == 1 && x.Image.Ocr == string.Empty && x.Image.People.Count == 1);
 
                 if (imagePerson == null)
                 {
                     continue;
                 }
 
-                Sex sex = person.Sex;
-                List<string> fakeAnswers = _context.People
-                    .Where(x => x.Sex == sex && x.Name != person.Name)
+                List<string> fakeAnswers = people
+                    .Where(x => x.Sex == person.Sex)
                     .Select(x => x.Name)
-                    .Take(3)
+                    .OrderBy(x => x)
+                    .SkipWhile(x => x != person.Name)
+                    .Take(4)
                     .ToList();
 
                 List<string> answers = fakeAnswers.ToList();
-                answers.Add(person.Name);
-                answers.OrderBy(x => Guid.NewGuid());
+                if (answers.Count < 4)
+                {
+                    answers.AddRange(people
+                        .Where(x => x.Sex == person.Sex)
+                        .Select(x => x.Name)
+                        .Take(4 - answers.Count));
+                }
+                answers = answers.OrderBy(x => Guid.NewGuid()).ToList();
+
+                int suggestedDifficulty;
+                switch (person.Images.Count)
+                {
+                    case > 9:
+                        suggestedDifficulty = 1;
+                        break;
+                    case > 3:
+                        suggestedDifficulty = 2;
+                        break;
+                    default:
+                        suggestedDifficulty = 3;
+                        break;
+                }
 
                 QuestionDto question = new()
                 {
                     QuestionTitle = "Jaka postać przedstawiona jest na zdjęciu?",
-                    QuestionBody = $"<img src='{imagePerson.Image.Url}'><br>{string.Join("<br> -",answers)}",
-                    SearchText = person.Name,
+                    QuestionBody = $"<img src='{imagePerson.Image.Url}'><br>A. {answers[0]}<br>B. {answers[1]}<br>C. {answers[2]}<br>D. {answers[3]}",
+                    SearchText = imagePerson.Image.Alt,
                     CorrectAnswer = person.Name,
-                    SuggestedDifficulty = 1
+                    SuggestedDifficulty = suggestedDifficulty
                 };
                 questions.Add(question);
             }
 
             var questionsStringContent = new StringContent(JsonConvert.SerializeObject(questions), Encoding.UTF8, "application/json");
-            _ = new HttpClient().PostAsync("https://localhost:7068/api/questions/save", questionsStringContent).Result;
+            _ = new HttpClient().PostAsync("https://ipn.hostingasp.pl/api/questions/save", questionsStringContent).Result;
         }
     }
 }
