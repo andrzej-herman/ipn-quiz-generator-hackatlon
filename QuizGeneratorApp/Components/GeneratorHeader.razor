@@ -19,7 +19,7 @@
             <ul class="navbar-nav navbar-right">
                 <AuthorizeView Context="auth">
                     <Authorized>
-                        <li class="nav-item pr-2 text-white">@auth.User.Identity?.Name</li>
+                        <li class="nav-item pr-4 text-white">@auth.User.Identity?.Name</li>
                         <RadzenButton Size="ButtonSize.Small" Variant="Variant.Outlined" Click="Logout" Text="Wyloguj się" ButtonStyle="ButtonStyle.Light" />
                     </Authorized>
                     <NotAuthorized>

@@ -50,12 +50,21 @@
             {
                 <div class="quiz-generator-alert mt-4">@GeneratorError</div>
             }
+        }
+        else
+        {
+            if (Questions.Any())
+            {
+                <QuestionList Questions="@Questions" />
+            }
+            else
+            {
+                <p style="color: red">Brak pytań spełniających podane kryteria</p>
+                <br/>
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Click="Search">Wyszukaj pytania ponownie</RadzenButton>
+            }
     }
-    else
-    {
-        <QuestionList Questions="@Questions"/>
-    }
-    </div>ccccccccc
+    </div>
 </div>
 
 @code {
@@ -115,5 +124,11 @@
 
         Questions = questions;
         IsLoading = false;
+    }
+
+    private void Search()
+    {
+        Questions = null;
+        StateHasChanged();
     }
 }
