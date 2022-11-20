@@ -1,7 +1,6 @@
 ﻿@page "/generator"
 @*<AuthorizeView Context="auth">
     <Authorized>*@
-        <GenaratorLoader Visible="@IsLoading"/>
         <GeneratorHeader Page="Index"/>
         <GeneratorOptions/>
         <GeneratorFooter/>
@@ -11,7 +10,3 @@
     </NotAuthorized>
 </AuthorizeView>*@
 
-
-@code {
-    private bool IsLoading { get; set; }
-}
