@@ -9,6 +9,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Mosaik.Core;
 using Catalyst;
+using IronOcr;
 
 namespace Scraper.PeoplePhotos.Services
 {
@@ -21,6 +22,7 @@ namespace Scraper.PeoplePhotos.Services
     {
         private readonly ImagesContext _context;
         private FaceRecognition faceRecognition;
+        private IronTesseract ocr;
         private HashSet<string> _maleFirstNames;
         private HashSet<string> _famaleFirstNames;
 
@@ -35,15 +37,18 @@ namespace Scraper.PeoplePhotos.Services
 
             //Catalyst.Models.Polish.Register();
 
-            //var doc = new Document("To jest zdjęcie Józefa Piłsudzkiego", Language.Polish);
+            //var doc = new Document("To jest zdjęcie Józefa Piłsudzkiego. To jest Józef Połsudzki.", Language.Polish);
             //var nlp = Pipeline.For(Language.Polish);
             //nlp.ProcessSingle(doc);
 
             _maleFirstNames = File.ReadAllLines("Data/polish_male_firstnames.txt").Select(x => x.ToLower()).ToArray().ToHashSet();
             _famaleFirstNames = File.ReadAllLines("Data/polish_female_firstnames.txt").Select(x => x.ToLower()).ToArray().ToHashSet();
             faceRecognition = FaceRecognition.Create("FaceRecognition");
+            ocr = new IronTesseract(); // nothing to configure
+            ocr.Language = OcrLanguage.PolishBest;
+            ocr.Configuration.TesseractVersion = TesseractVersion.Tesseract5;
             IWebDriver driver = new ChromeDriver();
-            int page = 0; //149
+            int page = 0; //124
             while (true)
             {
                 driver.Url = $"https://przystanekhistoria.pl/pa2/teksty?page={page}";
@@ -136,6 +141,20 @@ namespace Scraper.PeoplePhotos.Services
                 }
             }
 
+            try
+            {
+                using (var Input = new OcrInput())
+                {
+                    Input.AddImage(@"FaceRecognition/image.png");
+                    var ocrResult = ocr.Read(Input);
+                    image.Ocr = ocrResult.Text?.Trim();
+                }
+            }
+            catch
+            {
+
+            }
+
             _context.SaveChanges();
         }
 
@@ -157,8 +176,6 @@ namespace Scraper.PeoplePhotos.Services
             return person.Id;
         }
 
-
-
         public List<PersonDto> FindPeopleInAlt(string alt)
         {
             List<string> potencialNames = Regex.Matches(alt, @"[A-ZŻŹĆĄŚĘŁÓŃ]{1}[a-zżźćńółęąś]*\s[A-ZŻŹĆĄŚĘŁÓŃ]{1}[a-zżźćńółęąś]*")
@@ -169,7 +186,26 @@ namespace Scraper.PeoplePhotos.Services
 
             foreach (string potencialName in potencialNames)
             {
-                string lowerFirstName = potencialName.Split(' ')[0].ToLower();
+                string[] splittedBySpace = potencialName.Split(' ');
+
+                if (splittedBySpace.Length < 2)
+                {
+                    continue;
+                }
+
+                string lowerFirstName = splittedBySpace[0].ToLower();
+                string lowerLastName = splittedBySpace[1].ToLower();
+
+                if (lowerFirstName.Length <= 3)
+                {
+                    continue;
+                }
+
+                if (lowerLastName.Length <= 3)
+                {
+                    continue;
+                }
+
                 if (_maleFirstNames.Contains(lowerFirstName))
                 {
                     people.Add(new PersonDto
@@ -178,8 +214,18 @@ namespace Scraper.PeoplePhotos.Services
                         Sex = Sex.MALE
                     });
                 }
-                if (_famaleFirstNames.Contains(lowerFirstName))
+                else if (_famaleFirstNames.Contains(lowerFirstName))
                 {
+                    if (lowerFirstName.EndsWith('a'))
+                    {
+                        string lowerFirstNameWithOutLastA = lowerFirstName.Substring(0, lowerFirstName.Length - 1);
+                        if (_maleFirstNames.Contains(lowerFirstNameWithOutLastA))
+                        {
+                            //Pomijamy problematyczne imiona
+                            continue;
+                        }
+                    }
+
                     people.Add(new PersonDto
                     {
                         Name = potencialName,

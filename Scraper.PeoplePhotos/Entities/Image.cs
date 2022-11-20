@@ -9,6 +9,7 @@ namespace Scraper.PeoplePhotos.Entities
         public string Url { get; set; }
         public string Alt { get; set; }
         public int? FacesCount { get; set; }
+        public string Ocr { get; set; }
 
         public List<ImagePerson> People { get; set; } = new List<ImagePerson>();
     }
